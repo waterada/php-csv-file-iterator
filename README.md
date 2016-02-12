@@ -45,7 +45,6 @@ $csv = new CsvFileIterator($path);
 //    3
 //    4
 //    5
-])->toCsv()->getPath());
 $csv->getColumnMapper()->setConditions(['ID' => ['NOT_IN', ['2', '3']]);
 foreach ($csv->iterate() as $record) {
     echo $record->get('ID'); // 1 → 4 → 5 の順に出力
@@ -62,7 +61,6 @@ $csv = new CsvFileIterator($path);
 //    3
 //    4
 //    5
-])->toCsv()->getPath());
 $csv->getColumnMapper()->setConditions(['ID' => ['IN', ['2', '3']]);
 foreach ($csv->iterate() as $record) {
     echo $record->get('ID'); // 2 → 3 の順に出力
@@ -75,7 +73,6 @@ $csv = new CsvFileIterator($path);
 //    Q1,Q2,Q3,Q4,Q5
 //    11,12,13,14,15
 //    21,22,23,24,25
-])->toCsv()->getPath());
 $csv->getColumnMapper()->setColumns(['Q5', 'Q3', 'Q1']);
 echo implode(",", $csv->getColumns()); // Q5,Q3,Q1
 foreach ($csv->iterate() as $record) {
