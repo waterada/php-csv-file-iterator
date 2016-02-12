@@ -37,13 +37,14 @@ foreach ($csv->iterate() as $rownum => $record) {
 
 // 除外条件を設定可能
 //      指定したものを foreach で読み飛ばします。
-$csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
-    ['ID'],
-    ['1'],
-    ['2'],
-    ['3'],
-    ['4'],
-    ['5'],
+$csv = new CsvFileIterator($path);
+// CSVの中身:  
+//    ID
+//    1
+//    2
+//    3
+//    4
+//    5
 ])->toCsv()->getPath());
 $csv->getColumnMapper()->setConditions(['ID' => ['NOT_IN', ['2', '3']]);
 foreach ($csv->iterate() as $record) {
@@ -53,13 +54,14 @@ foreach ($csv->iterate() as $record) {
 
 // 合致条件を設定可能
 //     指定したもの以外を foreach で読み飛ばします。
-$csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
-    ['ID'],
-    ['1'],
-    ['2'],
-    ['3'],
-    ['4'],
-    ['5'],
+$csv = new CsvFileIterator($path);
+// CSVの中身:  
+//    ID
+//    1
+//    2
+//    3
+//    4
+//    5
 ])->toCsv()->getPath());
 $csv->getColumnMapper()->setConditions(['ID' => ['IN', ['2', '3']]);
 foreach ($csv->iterate() as $record) {
@@ -68,10 +70,11 @@ foreach ($csv->iterate() as $record) {
 
 
 // 出力カラム順指定 (toArray の順序を指定する)
-$csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
-    ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
-    ['11', '12', '13', '14', '15'],
-    ['21', '22', '23', '24', '25'],
+$csv = new CsvFileIterator($path);
+// CSVの中身:  
+//    Q1,Q2,Q3,Q4,Q5
+//    11,12,13,14,15
+//    21,22,23,24,25
 ])->toCsv()->getPath());
 $csv->getColumnMapper()->setColumns(['Q5', 'Q3', 'Q1']);
 echo implode(",", $csv->getColumns()); // Q5,Q3,Q1
