@@ -1,6 +1,8 @@
 CsvFileIterator
 ================
 
+[![Build Status](https://travis-ci.org/waterada/php-csv-file-iterator.svg?branch=master)](https://travis-ci.org/waterada/php-csv-file-iterator)
+
 概要(summary)
 -------------
 
