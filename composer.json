@@ -1,0 +1,33 @@
+{
+  "name": "waterada/csv-file-iterator",
+  "description": "Easy to read Csv, Tsv or Excel file as Iterator regardless encoding, bom nor delimitor.",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "waterada"
+    }
+  ],
+  "repositories": [
+    { "packagist": false },
+    {
+      "type": "composer",
+      "url": "http://composer-proxy.jp/proxy/packagist"
+    },
+    {
+      "type": "git",
+      "url": "git@github.com:waterada/FileFabricate.git"
+    }
+  ],
+  "require": {
+    "phpoffice/phpexcel": "1.8.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "3.7.*",
+    "waterada/FileFabricate": "1.1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "waterada\\CsvFileIterator\\": "src"
+    }
+  }
+}
