@@ -107,7 +107,7 @@ $csv = new CsvFileIterator("aaa.xlsx");
 
 // 大量データを読む際に複数リクエストに分割して % を算出しながら読むこともできます。
 $csv = new CsvFileIterator($path);
-$csv->setLimit(1000); //1000行ごとにforeachを中断する ※こうすることで
+$csv->setLimit(1000); //1000行ごとにforeachを中断する ※こうすることでRecordLimitExceptionが発生するようになります。
 $position = $_SESSION['position']; //前回の "位置" を取得
 try {
     foreach ($csv->iterate($position) as $record) { // iterate() に前回の "位置" を渡す。null なら頭からとなる
