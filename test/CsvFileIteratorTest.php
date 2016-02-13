@@ -3,7 +3,9 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use waterada\CsvFileIterator\CsvFileIterator;
+use waterada\CsvFileIterator\FileHandler\Position;
 use waterada\CsvFileIterator\Record;
+use waterada\CsvFileIterator\RecordLimitException;
 
 /**
  * Class CsvFileIteratorTest
@@ -121,18 +123,6 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
             $actual[] = $record->get('ID');
         }
         $this->assertEquals($expected, $actual, $title);
-    }
-
-    public function test_condition_setConditions直後にnext呼ばずにcurrentしても大丈夫()
-    {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
-            ['Q1'],
-            ['11'],
-            ['21'],
-        ])->toCsv()->getPath());
-        $csv->getColumnMapper()->setConditions(['Q1' => ['NOT_IN', ['11']]]);
-        $actual = $this->__iterateRecords($csv);
-        $this->assertEquals('21', $actual[0]->get('Q1'));
     }
 
     public function test_condition_除外する行が10000行連続していてもスキップできる()
@@ -456,5 +446,105 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
             ["6", "←計算結果(6)が使われる", "", "", ""],
             ["1,234,567 ", "←書式の影響もうける", "", "", ""],
         ], $actual);
+    }
+
+    public function provider_suspending()
+    {
+        $path_csv = FileFabricate::fromString("ID\n" . implode("\n", range(1, 32)))->getPath();
+        return [
+            'csv' => [
+                $path_csv,
+                89, //ファイルのバイト数
+                [
+                    'start' => 0, //開始前は0
+                    '1st10' => 24, //3("ID\n") + 2文字(x\n) x 9個 + 3文字(10\n) - 1(0始まり) = 23
+                    '2nd10' => 54, //24(前の桁) + 3文字(xx\n) x 10個 - 1(0始まり) = 53
+                    '3rd5' => 69, //54(前の桁) + 3文字(xx\n) x 5個 - 1(0始まり) = 54 + 15 - 1 = 68
+                    'end' => 89, //69(前の桁) + 3文字(xx\n) x 7個 - 1文字(最後の改行) - 1(0始まり) + 1(最後なので) = 69 + 21 - 1 - 1 + 1 = 89
+                ],
+            ],
+            'xlsx' => [
+                __DIR__ . "/test_suspend.xlsx",
+                33, //行数
+                [
+                    'start' => 0, //開始前は0
+                    '1st10' => 11,
+                    '2nd10' => 21,
+                    '3rd5' => 26,
+                    'end' => 33,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provider_suspending
+     * @param string $path
+     * @param int $expectedMax
+     * @param array $expectedCursors
+     */
+    public function test_suspending_中断して再開する($path, $expectedMax, $expectedCursors)
+    {
+        $csv = new CsvFileIterator($path);
+        $csv->setLimit(10);
+
+        $maxCursor = $csv->getMaxCursor();
+        $this->assertEquals($expectedMax, $maxCursor, '最大値が取得できる');
+
+        //------------------------------------
+        /** @var RecordLimitException $e */
+        list($actual, $e) = $this->__iterateByLimit($csv, null);
+        $this->assertEquals('ID 2:1 3:2 4:3 5:4 6:5 7:6 8:7 9:8 10:9 11:10', $actual, "指定のlimitでforeachが止まる");
+        $this->assertTrue($e instanceof RecordLimitException);
+        $this->assertEquals(11, $e->getRownum(), "最初の10個までの行番号");
+        $this->assertEquals($expectedCursors['1st10'], $e->getCursor(), "最初の10個までのカーソル位置");
+        $serialized = serialize($e->getPosition());
+
+        //------------------------------------
+        $position = unserialize($serialized);
+        /** @var RecordLimitException $e */
+        list($actual, $e) = $this->__iterateByLimit($csv, $position);
+        $this->assertEquals('ID 12:11 13:12 14:13 15:14 16:15 17:16 18:17 19:18 20:19 21:20', $actual, "次のn件を取得可能");
+        $this->assertTrue($e instanceof RecordLimitException);
+        $this->assertEquals(21, $e->getRownum(), "次の10個までの行番号");
+        $this->assertEquals($expectedCursors['2nd10'], $e->getCursor(), "次の10個までのカーソル位置");
+        $serialized = serialize($e->getPosition());
+
+        //------------------------------------
+        $position = unserialize($serialized);
+        $csv->setLimit(5);
+        /** @var RecordLimitException $e */
+        list($actual, $e) = $this->__iterateByLimit($csv, $position);
+        $this->assertEquals('ID 22:21 23:22 24:23 25:24 26:25', $actual, "limitを変更可能");
+        $this->assertTrue($e instanceof RecordLimitException);
+        $this->assertEquals(26, $e->getRownum(), "次の5個までの行番号");
+        $this->assertEquals($expectedCursors['3rd5'], $e->getCursor(), "次の5個までのカーソル位置");
+        $serialized = serialize($e->getPosition());
+
+        //------------------------------------
+        $position = unserialize($serialized);
+        $csv->setLimit(100);
+        /** @var RecordLimitException $e */
+        list($actual, $e) = $this->__iterateByLimit($csv, $position);
+        $this->assertEquals('ID 27:26 28:27 29:28 30:29 31:30 32:31 33:32', $actual, "終端で止まる");
+        $this->assertNull($e, "例外は発生しない");
+    }
+
+    /**
+     * @param CsvFileIterator $csv
+     * @param Position|null $position
+     * @return array
+     */
+    private function __iterateByLimit($csv, $position)
+    {
+        $actual = 'ID';
+        try {
+            foreach ($csv->iterate($position) as $rownum => $record) {
+                $actual .= sprintf(' %s:%s', $rownum, $record->get('ID'));
+            }
+        } catch (RecordLimitException $e) {
+            return [$actual, $e];
+        }
+        return [$actual, null];
     }
 }

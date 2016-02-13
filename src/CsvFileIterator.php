@@ -3,7 +3,7 @@ namespace waterada\CsvFileIterator;
 
 use waterada\CsvFileIterator\ColumnMapper\ColumnMapper;
 use waterada\CsvFileIterator\ColumnMapper\IndexedColumnMapper;
-use waterada\CsvFileIterator\FileHandle\FileHandler;
+use waterada\CsvFileIterator\FileHandler\FileHandler;
 
 /**
  * Class CsvFileIterator
@@ -15,18 +15,19 @@ use waterada\CsvFileIterator\FileHandle\FileHandler;
 class CsvFileIterator
 {
     /**
-     * ファイルを具体的に操作するハンドラ
-     *
-     * @var FileHandler
+     * @var FileHandler ファイルを具体的に操作するハンドラ
      */
     protected $_fileHandle;
 
     /**
-     * 列名を列Indexに読み替えるマップ
-     *
-     * @var ColumnMapper
+     * @var ColumnMapper 列名を列Indexに読み替えるマップ
      */
     protected $_columnMapper;
+
+    /**
+     * @var null|int $limit 一度のリクエストで読む最大レコード数。これを過ぎたら強制的に foreach が終了する。null なら制限しない。
+     */
+    protected $_limit;
 
     /**
      * @param string $filePath
@@ -53,20 +54,55 @@ class CsvFileIterator
     }
 
     /**
+     * @param null|Position $position
      * @return Record[]
      */
-    public function iterate()
+    public function iterate($position = null)
     {
-        //現在処理中の行番号(0～) ※0 ならまだ未処理。1はラベル行。データは2～。除外するレコードも行としてカウントされる。
-        $rowNum = 0;
+        //開始位置をセット
+        $this->_fileHandle->rewind($position);
 
-        $this->_fileHandle->rewind();
-        while (($values = $this->_fileHandle->fgetcsv()) !== false) {
-            $rowNum++;
+        $count = 0;
+        while (($values = $this->__readLine($count)) !== false) {
+            $this->_fileHandle->incrementRownum();
+            $count++;
             if ($this->_columnMapper->meetsCondition($values) == false) {
-                yield $rowNum => new Record($this->_columnMapper, $values);
+                continue;
             }
+            yield $this->_fileHandle->getRownum() => new Record($this->_columnMapper, $values);
         }
+    }
+
+    /**
+     * @param int $count
+     * @return array|false
+     * @throws RecordLimitException
+     */
+    private function __readLine($count)
+    {
+        if (isset($this->_limit) && $this->_limit < $count + 1) { //制限設定があるなら次(+1)の行が制限を超えるなら終了とする
+            $e = new RecordLimitException();
+            $position = $this->_fileHandle->suspend();
+            $e->setPosition($position);
+            throw $e;
+        }
+        return $this->_fileHandle->fgetcsv();
+    }
+
+    /**
+     * @param null|int $limit 一度のリクエストで読む最大レコード数。これを過ぎたら強制的に foreach が終了する。null なら制限しない。
+     */
+    public function setLimit($limit)
+    {
+        $this->_limit = $limit;
+    }
+
+    /**
+     * @return int 最大
+     */
+    public function getMaxCursor()
+    {
+        return $this->_fileHandle->getMaxCursor();
     }
 
     /**

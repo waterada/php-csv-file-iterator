@@ -101,8 +101,22 @@ $csv = new CsvFileIterator($path, 'SJIS');
 $csv = new CsvFileIterator($path, null, "\t");
 
 
-// 拡張子が xlsx のファイル(Excelファイル)も自動認識して開けます（ただしCSV的なデータのみ読む）
+// 拡張子が xlsx のファイル(Excelファイル)も自動認識して開けます（ただしCSV的にデータのみ読む）
 $csv = new CsvFileIterator("aaa.xlsx");
+
+
+// 大量データを読む際に複数リクエストに分割して % を算出しながら読むこともできます。
+$csv = new CsvFileIterator($path);
+$csv->setLimit(1000); //1000行ごとにforeachを中断する ※こうすることで
+$position = $_SESSION['position']; //前回の "位置" を取得
+try {
+    foreach ($csv->iterate($position) as $record) { // iterate() に前回の "位置" を渡す。null なら頭からとなる
+        //処理
+    }
+} catch (RecordLimitException $e) { //中断した場合の処理
+    $_SESSION['position'] = $e->getPosition(); //セッションに保存
+    $percent = intval($e->getCursor() / $csv->getMaxCursor()); //進捗率
+}
 ```
 
 

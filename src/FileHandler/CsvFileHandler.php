@@ -1,5 +1,7 @@
 <?php
-namespace waterada\CsvFileIterator\FileHandle;
+namespace waterada\CsvFileIterator\FileHandler;
+
+use waterada\CsvFileIterator\Position;
 
 /**
  * CsvFileHandler
@@ -31,6 +33,7 @@ class CsvFileHandler extends FileHandler
 
         //ファイルの形式を（先頭部分を試し読みして）自動判別する
         list($this->_delim, $columnNames) = $this->_detectFormat($this->_fh, $option['encoding'], $option['delimiter']);
+
         return $columnNames;
     }
 
@@ -55,11 +58,35 @@ class CsvFileHandler extends FileHandler
 
     /**
      * @inheritdoc
+     * @param null|Position $position
      */
-    public function rewind()
+    public function rewind($position = null)
     {
-        rewind($this->_fh);
-        $this->fgetcsv(); //カラム行を飛ばす
+        if (isset($position)) {
+            $this->_position = $position;
+            fseek($this->_fh, $position->cursor);
+        } else {
+            rewind($this->_fh);
+            $this->fgetcsv(); //カラム行を飛ばす
+            $this->_position->rownum = 1;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function suspend()
+    {
+        $this->_position->cursor = ftell($this->_fh);
+        return $this->_position;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMaxCursor()
+    {
+        return filesize($this->_filePath);
     }
 
     /**

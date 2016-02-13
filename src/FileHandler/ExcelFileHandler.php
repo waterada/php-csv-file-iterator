@@ -1,17 +1,21 @@
 <?php
-namespace waterada\CsvFileIterator\FileHandle;
+namespace waterada\CsvFileIterator\FileHandler;
+
+use waterada\CsvFileIterator\Position;
 
 /**
  * ExcelFileHandler
- *
- * @property string $_filePath       : 読み込むファイルパス。
- * @property resource $_fh              : OPEN中のCSVファイル
  */
 class ExcelFileHandler extends FileHandler
 {
+    /**
+     * @var array 読み込んだデータ
+     */
     protected $_data;
-    protected $_position = 0;
 
+    /**
+     * @inheritdoc
+     */
     public function open($option)
     {
         $reader = \PHPExcel_IOFactory::createReader('Excel2007');
@@ -64,11 +68,14 @@ class ExcelFileHandler extends FileHandler
         return $columnNames;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function fgetcsv()
     {
-        if ($this->_position < count($this->_data)) {
-            $row = $this->_data[$this->_position];
-            $this->_position++;
+        if ($this->_position->cursor < count($this->_data)) {
+            $row = $this->_data[$this->_position->cursor];
+            $this->_position->cursor++;
         } else {
             $row = false;
         }
@@ -77,15 +84,40 @@ class ExcelFileHandler extends FileHandler
     }
 
     /**
-     * これをしないとポインタを掴み続けて、 Permission denied になりファイルが消せない（たぶんgcのタイミングがあとにあるから？）
+     * @inheritdoc
      */
     public function close()
     {
         unset($this->_data);
     }
 
-    public function rewind()
+    /**
+     * @inheritdoc
+     * @param null|Position $position
+     */
+    public function rewind($position = null)
     {
-        $this->_position = 1; //カラム行(0)は飛ばす
+        if (isset($position)) {
+            $this->_position = $position;
+        } else {
+            $this->_position->cursor = 1; //カラム行(0)は飛ばす
+            $this->_position->rownum = 1;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function suspend()
+    {
+        return $this->_position;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMaxCursor()
+    {
+        return count($this->_data);
     }
 }

@@ -127,14 +127,16 @@ class IndexedColumnMapper implements ColumnMapper
             foreach ($this->_conditions as $index => $cond) {
                 if (is_callable($cond)) {
                     if (call_user_func($cond, $this, $values) == false) {
-                        return true;
+                        return false;
                     }
-                } elseif (isset($cond[$values[$index]]) == $cond['__exclude']) {
-                    return true;
+                } else {
+                    if (isset($cond[$values[$index]]) == $cond['__exclude']) {
+                        return false;
+                    }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
