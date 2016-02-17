@@ -126,4 +126,26 @@ class CsvFileIterator
         }
         return true;
     }
+
+    /**
+     * @return array CSVの中身を２次元配列で返す。カラム行は無く、先頭行はデータ行から始まる。
+     */
+    public function toArray()
+    {
+        $array = [];
+        foreach ($this->iterate() as $record) {
+            $array[] = $record->toArray();
+        }
+        return $array;
+    }
+
+    /**
+     * @return array CSVの中身を２次元配列で返す。先頭行にカラム名の配列が入る。
+     */
+    public function toArrayWithColumns()
+    {
+        $array = $this->toArray();
+        array_unshift($array, $this->_columnMapper->getColumns());
+        return $array;
+    }
 }

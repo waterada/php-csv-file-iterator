@@ -91,6 +91,37 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('22', $actual[1]->get('Q2'));
     }
 
+    public function test_base_一括で配列として取得できる_カラム無し()
+    {
+        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+            ['Q1', 'Q2'],
+            ['11', '12'],
+            ['21', '22'],
+        ])->toCsv()->getPath());
+        $actual = $csv->toArray();
+
+        $this->assertEquals([
+            ['11', '12'],
+            ['21', '22'],
+        ], $actual);
+    }
+
+    public function test_base_一括で配列として取得できる_カラム有り()
+    {
+        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+            ['Q1', 'Q2'],
+            ['11', '12'],
+            ['21', '22'],
+        ])->toCsv()->getPath());
+        $actual = $csv->toArrayWithColumns();
+
+        $this->assertEquals([
+            ['Q1', 'Q2'],
+            ['11', '12'],
+            ['21', '22'],
+        ], $actual);
+    }
+
     public function provider_condition_exclude()
     {
         return [
