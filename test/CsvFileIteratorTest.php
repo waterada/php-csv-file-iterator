@@ -3,7 +3,7 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileIterator\FileHandler\Position;
+use waterada\CsvFileIterator\Position;
 use waterada\CsvFileIterator\Record;
 use waterada\CsvFileIterator\RecordLimitException;
 
