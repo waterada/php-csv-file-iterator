@@ -3,7 +3,7 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileIterator\Position;
+use waterada\CsvFileIterator\ReadingPosition;
 use waterada\CsvFileIterator\Record;
 use waterada\CsvFileIterator\RecordLimitException;
 
@@ -563,7 +563,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param CsvFileIterator $csv
-     * @param Position|null $position
+     * @param ReadingPosition|null $position
      * @return array
      */
     private function __iterateByLimit($csv, $position)

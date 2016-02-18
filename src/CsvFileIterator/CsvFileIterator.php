@@ -54,7 +54,7 @@ class CsvFileIterator
     }
 
     /**
-     * @param null|Position $position
+     * @param null|ReadingPosition $position
      * @return Record[]
      */
     public function iterate($position = null)
