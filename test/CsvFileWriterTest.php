@@ -8,11 +8,6 @@ use waterada\CsvFileWriter\LineBreakFlow;
 use waterada\CsvFileWriter\OutputToFlow;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-require_once __DIR__ . '/../src/CsvFileWriter/CsvFileWriter.php';
-require_once __DIR__ . '/../src/CsvFileWriter/CsvFileWriterFlow.php';
-require_once __DIR__ . '/../src/CsvFileWriter/Format/Format.php';
-require_once __DIR__ . '/../src/CsvFileWriter/Format/CsvFormat.php';
-require_once __DIR__ . '/../src/CsvFileWriter/Format/XlsxFormat.php';
 
 class CsvFileWriterTest extends PHPUnit_Framework_TestCase
 {
