@@ -1,10 +1,12 @@
 <?php
 namespace waterada\CsvFileWriter;
 
-use waterada\CsvFileIterator\WritingPosition;
 use waterada\CsvFileWriter\Format\CsvFormat;
 use waterada\CsvFileWriter\Format\Format;
 use waterada\CsvFileWriter\Format\XlsxFormat;
+use waterada\CsvFileWriter\Output\DownloadAfterMakingOutput;
+use waterada\CsvFileWriter\Output\DownloadStreamingOutput;
+use waterada\CsvFileWriter\Output\PathOutput;
 
 /**
  * Class CsvFileWriter
@@ -87,9 +89,7 @@ class CsvFileWriter
 
     public function setOutputFilePath($path, $existingStrategy = self::EXISTING_ERROR)
     {
-        $this->format->output = new Output(Output::MODE_PATH);
-        $this->format->output->path = $path;
-        $this->format->output->existingStrategy = $existingStrategy;
+        $this->format->output = new PathOutput($path, $existingStrategy);
 
         //既存ファイルの扱い
         if (file_exists($path)) {
@@ -106,7 +106,7 @@ class CsvFileWriter
 
     public function setOutputDownloadStreaming()
     {
-        $this->format->output = new Output(Output::MODE_DOWNLOAD_STREAMING);
+        $this->format->output = new DownloadStreamingOutput();
     }
 
     /**
@@ -114,8 +114,7 @@ class CsvFileWriter
      */
     public function setOutputDownloadAfterMaking($position)
     {
-        $this->format->output = new Output(Output::MODE_DOWNLOAD_AFTER_MAKING);
-        $this->format->output->position = $position;
+        $this->format->output = new DownloadAfterMakingOutput($position);
     }
 
     public function begin()

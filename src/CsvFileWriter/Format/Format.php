@@ -1,8 +1,7 @@
 <?php
 namespace waterada\CsvFileWriter\Format;
 
-use waterada\CsvFileWriter\CsvFileWriter;
-use waterada\CsvFileWriter\Output;
+use waterada\CsvFileWriter\Output\Output;
 
 abstract class Format
 {
@@ -10,10 +9,6 @@ abstract class Format
 
     /** @var Output */
     public $output = null;
-
-    public $existingStrategy = CsvFileWriter::EXISTING_ERROR;
-
-    public $filename = null;
 
     public function begin()
     {

@@ -1,8 +1,6 @@
 <?php
 namespace waterada\CsvFileWriter\Format;
 
-use waterada\CsvFileWriter\Output;
-
 class CsvFormat extends Format
 {
     const ENC_UTF8 = 'UTF-8';
@@ -32,22 +30,7 @@ class CsvFormat extends Format
     public function begin()
     {
         //ファイルハンドル返す
-        $this->__fh = null;
-        switch ($this->output->mode) {
-            case Output::MODE_PATH:
-                $this->__fh = fopen($this->output->getPath(), 'w');
-                break;
-            case Output::MODE_DOWNLOAD_AFTER_MAKING:
-                if ($this->output->position->isMaking()) {
-                    $this->__fh = fopen($this->output->getPath(), 'a');
-                } else {
-                    $this->__fh = fopen($this->output->getPath(), 'w');
-                }
-                break;
-            case Output::MODE_DOWNLOAD_STREAMING:
-                $this->__fh = fopen("php://output", 'w');
-                break;
-        }
+        $this->__fh = $this->output->getFileHandle();
         //エンコーディング
         $filterName = null;
         switch ($this->encoding) {
@@ -79,16 +62,8 @@ class CsvFormat extends Format
         //  １行ずつキャッシュして、常に前の行を出力する
         $this->__needsCache = ($this->br !== "\n" || $this->withBrAtEOF == false);
         //カラム行
-        switch ($this->output->mode) {
-            case Output::MODE_PATH:
-            case Output::MODE_DOWNLOAD_STREAMING:
-                $this->_outputColumnsLine();
-                break;
-            case Output::MODE_DOWNLOAD_AFTER_MAKING:
-                if ($this->output->position->getRownum() == 0) {
-                    $this->_outputColumnsLine();
-                }
-                break;
+        if ($this->output->skipColumnsLine() == false) {
+            $this->_outputColumnsLine();
         }
     }
 
