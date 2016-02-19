@@ -1,8 +1,6 @@
 <?php
 namespace waterada\CsvFileWriter;
 
-use waterada\CsvFileIterator\WritingPosition;
-
 class Flow
 {
     /** @var CsvFileWriter */
