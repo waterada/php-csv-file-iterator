@@ -1,9 +1,5 @@
 <?php
-namespace waterada\CsvFileWriter;
-
-use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileIterator\RecordLimitException;
-use waterada\CsvFileIterator\WritingPosition;
+namespace waterada\CsvFileOnWeb;
 
 class CsvFileOnWeb
 {
@@ -53,54 +49,5 @@ class CsvFileOnWeb
         }
         ob_end_clean();
         return "";
-    }
-}
-
-class CsvFileOnWebController
-{
-    public function __construct()
-    {
-        $this->onWeb = new CsvFileOnWeb();
-        $this->session = new \MockSession();
-    }
-
-    public function download_after_making()
-    {
-        //ファイルゴミが残る可能性あるので注意
-        /** @var WritingPosition $position */
-        $position = $this->session->get("position");
-        if (!isset($position)) {
-            $path = "";
-            $position = new WritingPosition($path);
-        }
-        if ($position->isMaking()) {
-            $out = (new CsvFileWriterFlow())
-                ->CSV()
-                ->SJIS()
-                ->LF()
-                ->WITH_BR_at_EOF()
-                ->noColumnsLine()
-                ->toDownloadAfterMaking($position)
-                ->begin();
-            $isFinished = $this->_selectFromTable(
-                function ($data) use ($out) {
-                    $out->outputLine($data);
-                },
-                $position->getNextRownum(),
-                1000
-            );
-            $out->finish($isFinished); //完了していたら$positionにフラグ立て
-            $this->session->set("position", $position);
-            $this->onWeb->ajaxHeader();
-            return $this->onWeb->ajaxBody([ //ダウンロードファイル作成中
-                'isFinished' => $isFinished,
-                'current' => $position->getRownum(), //現在の出力行
-            ]);
-        }
-        //ダウンロード
-        $this->session->remove("position");
-        $filename = "";
-        $this->onWeb->downloadHeader($position->getPath(), $filename);
-        return $this->onWeb->downloadBody($position->getPath()); //完了(一度にメモリにロードしないように配慮)
     }
 }
