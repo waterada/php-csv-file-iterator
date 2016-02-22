@@ -276,4 +276,6 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
 //        $actual = $this->__getActualContents($path);
 //        $this->assertEquals([["あ"]], $actual);
 //    }
+
+//todo: Excelで分割ダウンロードしようとしたら、前のファイルがある時点でエラーにする
 }
