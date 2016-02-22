@@ -5,8 +5,6 @@ use waterada\CsvFileWriter\WritingPosition;
 use waterada\CsvFileOnWeb\CsvFileOnWeb;
 use waterada\CsvFileWriter\CsvFileWriterFlow;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
-
 /**
  * @property PHPUnit_Framework_MockObject_MockObject|CsvFileOnWeb $onWeb
  * @property array $session
@@ -63,7 +61,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
                 strlen("ID\n1\n2\n3\n4\n5\n6\n"),
             ],
             [
-                realpath('test_suspend_8.xlsx'),
+                realpath(__DIR__ . '/test_suspend_8.xlsx'),
                 count(['ID']) + count(range(1, 8)),
                 count(['ID']) + count(range(1, 3)),
                 count(['ID']) + count(range(1, 6)),

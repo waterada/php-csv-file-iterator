@@ -1,13 +1,10 @@
 <?php
-// 実行方法: vendor/bin/phpunit test/CsvFileIteratorTest.php
 use waterada\CsvFileIterator\CsvFileIterator;
 use waterada\CsvFileWriter\CsvFileWriterFlow;
 use waterada\CsvFileWriter\EncodingFlow;
 use waterada\CsvFileWriter\HeaderFlow;
 use waterada\CsvFileWriter\LineBreakFlow;
 use waterada\CsvFileWriter\OutputToFlow;
-
-require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 class CsvFileWriterTest extends PHPUnit_Framework_TestCase
 {

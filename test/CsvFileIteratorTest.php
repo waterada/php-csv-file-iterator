@@ -1,7 +1,4 @@
 <?php
-// 実行方法: vendor/bin/phpunit test/CsvFileIteratorTest.php
-require_once dirname(__DIR__) . '/vendor/autoload.php';
-
 use waterada\CsvFileIterator\CsvFileIterator;
 use waterada\CsvFileIterator\ReadingPosition;
 use waterada\CsvFileIterator\Record;
@@ -495,7 +492,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
                 ],
             ],
             'xlsx' => [
-                __DIR__ . "/test_suspend.xlsx",
+                __DIR__ . "/test_suspend_32.xlsx",
                 33, //行数
                 [
                     'start' => 0, //開始前は0

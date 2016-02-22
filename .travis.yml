@@ -10,4 +10,4 @@ before_script:
   - composer install
 
 script:
-  - vendor/bin/phpunit test/CsvFileIteratorTest.php --stderr
+  - vendor/bin/phpunit --stderr
