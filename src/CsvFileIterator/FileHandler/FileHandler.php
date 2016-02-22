@@ -1,7 +1,7 @@
 <?php
 namespace waterada\CsvFileIterator\FileHandler;
 
-use waterada\CsvFileIterator\Position;
+use waterada\CsvFileIterator\ReadingPosition;
 
 /**
  * FileHandler
@@ -29,14 +29,14 @@ abstract class FileHandler
     protected $_filePath;
 
     /**
-     * @var Position 現在位置を指し示す
+     * @var ReadingPosition 現在位置を指し示す
      */
     protected $_position;
 
     public function __construct($filePath)
     {
         $this->_filePath = $filePath;
-        $this->_position = new Position();
+        $this->_position = new ReadingPosition();
         $this->_limit = null;
     }
 
@@ -63,14 +63,14 @@ abstract class FileHandler
     /**
      * 先頭位置に戻す。先頭位置とはカラム行の次の行のこと。
      *
-     * @param null|Position $position
+     * @param null|ReadingPosition $position
      */
     abstract public function rewind($position = null);
 
     /**
      * 一時停止させ、復元に必要な情報を返す
      *
-     * @return Position
+     * @return ReadingPosition
      */
     abstract public function suspend();
 

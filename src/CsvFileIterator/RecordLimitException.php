@@ -8,10 +8,10 @@ namespace waterada\CsvFileIterator;
  */
 class RecordLimitException extends \Exception
 {
-    /** @var Position */
+    /** @var ReadingPosition */
     protected $_position;
 
-    public function setPosition(Position $position)
+    public function setPosition(ReadingPosition $position)
     {
         $this->_position = $position;
     }

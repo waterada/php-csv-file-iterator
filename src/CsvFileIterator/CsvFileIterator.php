@@ -25,11 +25,6 @@ class CsvFileIterator
     protected $_columnMapper;
 
     /**
-     * @var null|int $limit 一度のリクエストで読む最大レコード数。これを過ぎたら強制的に foreach が終了する。null なら制限しない。
-     */
-    protected $_limit;
-
-    /**
      * @param string $filePath
      * @param string|null $encoding - nullなら自動判別
      * @param string|null $delimiter - nullなら自動判別
@@ -54,16 +49,18 @@ class CsvFileIterator
     }
 
     /**
-     * @param null|Position $position
+     * @param null|ReadingPosition $position
+     * @param null|int $limit 一度のリクエストで読む最大レコード数。これを過ぎたら強制的に foreach が終了する。null なら制限しない。
      * @return Record[]
+     * @throws RecordLimitException
      */
-    public function iterate($position = null)
+    public function iterate($position = null, $limit = null)
     {
         //開始位置をセット
         $this->_fileHandle->rewind($position);
 
         $count = 0;
-        while (($values = $this->__readLine($count)) !== false) {
+        while (($values = $this->__readLine($count, $limit)) !== false) {
             $this->_fileHandle->incrementRownum();
             $count++;
             if ($this->_columnMapper->meetsCondition($values) == false) {
@@ -75,26 +72,19 @@ class CsvFileIterator
 
     /**
      * @param int $count
+     * @param null|int $limit
      * @return array|false
      * @throws RecordLimitException
      */
-    private function __readLine($count)
+    private function __readLine($count, $limit = null)
     {
-        if (isset($this->_limit) && $this->_limit < $count + 1) { //制限設定があるなら次(+1)の行が制限を超えるなら終了とする
+        if (isset($limit) && $limit < $count + 1) { //制限設定があるなら次(+1)の行が制限を超えるなら終了とする
             $e = new RecordLimitException();
             $position = $this->_fileHandle->suspend();
             $e->setPosition($position);
             throw $e;
         }
         return $this->_fileHandle->fgetcsv();
-    }
-
-    /**
-     * @param null|int $limit 一度のリクエストで読む最大レコード数。これを過ぎたら強制的に foreach が終了する。null なら制限しない。
-     */
-    public function setLimit($limit)
-    {
-        $this->_limit = $limit;
     }
 
     /**

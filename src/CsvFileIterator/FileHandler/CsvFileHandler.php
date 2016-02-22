@@ -1,7 +1,7 @@
 <?php
 namespace waterada\CsvFileIterator\FileHandler;
 
-use waterada\CsvFileIterator\Position;
+use waterada\CsvFileIterator\ReadingPosition;
 
 /**
  * CsvFileHandler
@@ -58,7 +58,7 @@ class CsvFileHandler extends FileHandler
 
     /**
      * @inheritdoc
-     * @param null|Position $position
+     * @param null|ReadingPosition $position
      */
     public function rewind($position = null)
     {
