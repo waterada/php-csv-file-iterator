@@ -48,6 +48,21 @@ class FormatFlow extends Flow
         $this->_x->setFormat(CsvFileWriter::FORMAT_XLSX);
         return new HeaderFlow($this->_x);
     }
+
+    public function ExcelFriendlyCsvSjis()
+    {
+        return $this->CSV()->SJIS()->LF()->WITH_BR_at_EOF();
+    }
+
+    public function ExcelFriendlyCsvUtf8()
+    {
+        return $this->CSV()->UTF8()->BOM()->LF()->WITH_BR_at_EOF();
+    }
+
+    public function ExcelFriendlyTsvUtf16le()
+    {
+        return $this->TSV()->UTF16LE()->LF()->WITH_BR_at_EOF();
+    }
 }
 
 class EncodingFlow extends Flow
