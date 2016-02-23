@@ -1,7 +1,7 @@
 TeraCsvReader
 ================
 
-[![Build Status](https://travis-ci.org/waterada/php-csv-file-iterator.svg?branch=master)](https://travis-ci.org/waterada/php-csv-file-iterator)
+[![Build Status](https://travis-ci.org/waterada/tera-csv-php.svg?branch=master)](https://travis-ci.org/waterada/tera-csv-php)
 
 概要(summary)
 -------------
