@@ -1,12 +1,12 @@
 <?php
-use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileIterator\RecordLimitException;
-use waterada\CsvFileWriter\WritingPosition;
-use waterada\CsvFileOnWeb\CsvFileOnWeb;
-use waterada\CsvFileWriter\CsvFileWriterFlow;
+use waterada\TeraCsvReader\TeraCsvReader;
+use waterada\TeraCsvReader\RecordLimitException;
+use waterada\TeraCsvWriter\WritingPosition;
+use waterada\TeraCsvOnWeb\TeraCsvOnWeb;
+use waterada\TeraCsvWriter\TeraCsvWriterFlow;
 
 /**
- * @property PHPUnit_Framework_MockObject_MockObject|CsvFileOnWeb $onWeb
+ * @property PHPUnit_Framework_MockObject_MockObject|TeraCsvOnWeb $onWeb
  * @property array $session
  * @property array $actual
  * @property string[] paths
@@ -41,7 +41,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
 
     private function __mock_OnWeb()
     {
-        $this->onWeb = $this->getMockBuilder('waterada\CsvFileOnWeb\CsvFileOnWeb')->setMethods([
+        $this->onWeb = $this->getMockBuilder('waterada\TeraCsvOnWeb\TeraCsvOnWeb')->setMethods([
             'ajaxHeader',
             'ajaxBody',
             'downloadHeader',
@@ -115,7 +115,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
     public function read($path)
     {
         $position = $this->__session_get("position");
-        $iterator = new CsvFileIterator($path);
+        $iterator = new TeraCsvReader($path);
         try {
             foreach ($iterator->iterate($position, self::RECORD_LIMIT) as $rownum => $record) {
                 $this->actual[] = $record->get("ID"); //行ごとの処理
@@ -173,7 +173,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
     {
         $this->onWeb->downloadHeader($filename); //ここでヘッダ送出（ただしファイルサイズ不明）
         if ($iSCsv) {
-            $out = (new CsvFileWriterFlow())
+            $out = (new TeraCsvWriterFlow())
                 ->CSV()
                 ->UTF8()
                 ->withoutBOM()
@@ -183,7 +183,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
                 ->toDownloadStreming()
                 ->begin();
         } else {
-            $out = (new CsvFileWriterFlow())
+            $out = (new TeraCsvWriterFlow())
                 ->XLSX()
                 ->columns($columns)
                 ->toDownloadStreming()
@@ -266,7 +266,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
         $this->assertStringEndsWith(".xlsx", $path);
         $this->assertFileExists($path);
         $this->assertNotEquals(0, filesize($path));
-        $actual = (new CsvFileIterator($path))->toArrayWithColumns();
+        $actual = (new TeraCsvReader($path))->toArrayWithColumns();
         $this->assertEquals(array_merge([$columns], $data), $actual, "Excelファイルの内容が正しいこと");
         $xlsxBinary = file_get_contents($path);
 
@@ -291,7 +291,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
         }
         if ($position->isMaking()) {
             if ($csv_or_xlsx === 'CSV') {
-                $out = (new CsvFileWriterFlow())
+                $out = (new TeraCsvWriterFlow())
                     ->CSV()
                     ->SJIS()
                     ->LF()
@@ -301,7 +301,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
                     ->begin();
                 $limit = self::RECORD_LIMIT;
             } else {
-                $out = (new CsvFileWriterFlow())
+                $out = (new TeraCsvWriterFlow())
                     ->XLSX()
                     ->columns($columns)
                     ->toDownloadAfterMaking($position)
@@ -385,7 +385,7 @@ class CsvWriterControllerTest extends PHPUnit_Framework_TestCase
     {
         $path = $this->__testPath('.xlsx');
         file_put_contents($path, $binary);
-        $data = (new CsvFileIterator($path))->toArrayWithColumns();
+        $data = (new TeraCsvReader($path))->toArrayWithColumns();
         return $data;
     }
 }

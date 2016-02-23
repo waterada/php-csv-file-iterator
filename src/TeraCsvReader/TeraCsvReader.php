@@ -1,18 +1,18 @@
 <?php
-namespace waterada\CsvFileIterator;
+namespace waterada\TeraCsvReader;
 
-use waterada\CsvFileIterator\ColumnMapper\ColumnMapper;
-use waterada\CsvFileIterator\ColumnMapper\IndexedColumnMapper;
-use waterada\CsvFileIterator\FileHandler\FileHandler;
+use waterada\TeraCsvReader\ColumnMapper\ColumnMapper;
+use waterada\TeraCsvReader\ColumnMapper\IndexedColumnMapper;
+use waterada\TeraCsvReader\FileHandler\FileHandler;
 
 /**
- * Class CsvFileIterator
+ * Class TeraCsvReader
  * CSVもしくはTSVのファイルをIteratorとして読み込むためのクラス。
  * BOMや文字コード(ただしSJIS, UTF-8, UTF-16LE のみ)、区切り文字は(1行目に\tを含んでいるかどうかで)自動判別する。
  * 1行目のラベル行は改行を含まないことが前提。
  * 文字コードはラベルの次の行から20行読んで判別する。
  */
-class CsvFileIterator
+class TeraCsvReader
 {
     /**
      * @var FileHandler ファイルを具体的に操作するハンドラ

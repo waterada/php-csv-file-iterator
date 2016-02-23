@@ -1,7 +1,7 @@
 <?php
-namespace waterada\CsvFileWriter\Format;
+namespace waterada\TeraCsvWriter\Format;
 
-use waterada\CsvFileWriter\Output\Output;
+use waterada\TeraCsvWriter\Output\Output;
 
 abstract class Format
 {

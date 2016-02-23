@@ -1,9 +1,9 @@
 <?php
-namespace waterada\CsvFileWriter;
+namespace waterada\TeraCsvWriter;
 
 class Flow
 {
-    /** @var CsvFileWriter */
+    /** @var TeraCsvWriter */
     protected $_x;
 
     protected $_args;
@@ -11,9 +11,9 @@ class Flow
     /**
      * Flow constructor.
      *
-     * @param CsvFileWriter $x
+     * @param TeraCsvWriter $x
      */
-    public function __construct(CsvFileWriter $x)
+    public function __construct(TeraCsvWriter $x)
     {
         $this->_x = $x;
         $this->_args = func_get_args();
@@ -21,11 +21,11 @@ class Flow
     }
 }
 
-class CsvFileWriterFlow extends FormatFlow
+class TeraCsvWriterFlow extends FormatFlow
 {
     public function __construct()
     {
-        parent::__construct(new CsvFileWriter());
+        parent::__construct(new TeraCsvWriter());
     }
 }
 
@@ -33,19 +33,19 @@ class FormatFlow extends Flow
 {
     public function CSV()
     {
-        $this->_x->setFormat(CsvFileWriter::FORMAT_CSV);
+        $this->_x->setFormat(TeraCsvWriter::FORMAT_CSV);
         return new EncodingFlow($this->_x);
     }
 
     public function TSV()
     {
-        $this->_x->setFormat(CsvFileWriter::FORMAT_TSV);
+        $this->_x->setFormat(TeraCsvWriter::FORMAT_TSV);
         return new EncodingFlow($this->_x);
     }
 
     public function XLSX()
     {
-        $this->_x->setFormat(CsvFileWriter::FORMAT_XLSX);
+        $this->_x->setFormat(TeraCsvWriter::FORMAT_XLSX);
         return new HeaderFlow($this->_x);
     }
 
@@ -69,19 +69,19 @@ class EncodingFlow extends Flow
 {
     public function UTF8()
     {
-        $this->_x->setEncoding(CsvFileWriter::ENC_UTF8);
+        $this->_x->setEncoding(TeraCsvWriter::ENC_UTF8);
         return new Utf8BomFlow($this->_x);
     }
 
     public function UTF16LE()
     {
-        $this->_x->setEncoding(CsvFileWriter::ENC_UTF16LE);
+        $this->_x->setEncoding(TeraCsvWriter::ENC_UTF16LE);
         return new LineBreakFlow($this->_x);
     }
 
     public function SJIS()
     {
-        $this->_x->setEncoding(CsvFileWriter::ENC_SJIS);
+        $this->_x->setEncoding(TeraCsvWriter::ENC_SJIS);
         return new LineBreakFlow($this->_x);
     }
 }
@@ -174,13 +174,13 @@ class ExistingFileFlow extends Flow
 {
     public function errorIfExists()
     {
-        $this->_x->setOutputFilePath($this->_args[0], CsvFileWriter::EXISTING_ERROR);
+        $this->_x->setOutputFilePath($this->_args[0], TeraCsvWriter::EXISTING_ERROR);
         return new BeginFlow($this->_x);
     }
 
     public function overwriteIfExists()
     {
-        $this->_x->setOutputFilePath($this->_args[0], CsvFileWriter::EXISTING_OVERWRITE);
+        $this->_x->setOutputFilePath($this->_args[0], TeraCsvWriter::EXISTING_OVERWRITE);
         return new BeginFlow($this->_x);
     }
 
@@ -217,7 +217,7 @@ class Outputable extends Flow //型をどこかに記載することを考慮し
     }
 }
 
-//$csv = new StartFlow(new CsvFileWriter());
+//$csv = new StartFlow(new TeraCsvWriter());
 //$output = $csv
 //    ->CSV()
 //    ->UTF16LE()
@@ -225,7 +225,7 @@ class Outputable extends Flow //型をどこかに記載することを考慮し
 //    ->header($columns)
 //    ->toPath($path)->errorIfExists()
 //    ->begin();
-//$output = (new CsvFileWriter())->flow()
+//$output = (new TeraCsvWriter())->flow()
 //    ->CSV()
 //    ->UTF8()->withoutBOM()
 //    ->LF()->WITH_BR_at_EOF()

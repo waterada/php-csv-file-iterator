@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileWriter\Output;
+namespace waterada\TeraCsvWriter\Output;
 
 class PathOutput extends Output
 {

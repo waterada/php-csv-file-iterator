@@ -1,20 +1,20 @@
 <?php
-namespace waterada\CsvFileWriter;
+namespace waterada\TeraCsvWriter;
 
-use waterada\CsvFileWriter\Format\CsvFormat;
-use waterada\CsvFileWriter\Format\Format;
-use waterada\CsvFileWriter\Format\XlsxFormat;
-use waterada\CsvFileWriter\Output\DownloadAfterMakingOutput;
-use waterada\CsvFileWriter\Output\DownloadStreamingOutput;
-use waterada\CsvFileWriter\Output\PathOutput;
+use waterada\TeraCsvWriter\Format\CsvFormat;
+use waterada\TeraCsvWriter\Format\Format;
+use waterada\TeraCsvWriter\Format\XlsxFormat;
+use waterada\TeraCsvWriter\Output\DownloadAfterMakingOutput;
+use waterada\TeraCsvWriter\Output\DownloadStreamingOutput;
+use waterada\TeraCsvWriter\Output\PathOutput;
 
 /**
- * Class CsvFileWriter
+ * Class TeraCsvWriter
  * CSVもしくはTSVのファイルを１行すつ生成し、レスポンスへと流すためのクラス。
  * BOMの有無や文字コード(ただしSJIS, UTF-8, UTF-16LE のみ)、区切り文字を指定可能。
  * 1行目はラベル行となる。
  */
-class CsvFileWriter
+class TeraCsvWriter
 {
     /** @var Format */
     public $format;

@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileIterator\ColumnMapper;
+namespace waterada\TeraCsvReader\ColumnMapper;
 
 /**
  * 指定された名前のカラムが、配列の何列目なのかを管理するクラス。

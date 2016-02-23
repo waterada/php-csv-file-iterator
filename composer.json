@@ -27,9 +27,9 @@
   },
   "autoload": {
     "psr-4": {
-      "waterada\\CsvFileIterator\\": "src/CsvFileIterator",
-      "waterada\\CsvFileWriter\\": "src/CsvFileWriter",
-      "waterada\\CsvFileOnWeb\\": "src/CsvFileOnWeb"
+      "waterada\\TeraCsvReader\\": "src/TeraCsvReader",
+      "waterada\\TeraCsvWriter\\": "src/TeraCsvWriter",
+      "waterada\\TeraCsvOnWeb\\": "src/TeraCsvOnWeb"
     }
   }
 }

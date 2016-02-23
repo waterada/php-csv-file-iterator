@@ -1,8 +1,8 @@
 <phpunit bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="test">
-            <file>test/CsvFileIteratorTest.php</file>
-            <file>test/CsvFileWriterTest.php</file>
+            <file>test/TeraCsvReaderTest.php</file>
+            <file>test/TeraCsvWriterTest.php</file>
             <file>test/CsvWriterControllerTest.php</file>
         </testsuite>
     </testsuites>

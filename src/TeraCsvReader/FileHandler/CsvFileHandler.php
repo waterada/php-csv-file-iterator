@@ -1,7 +1,7 @@
 <?php
-namespace waterada\CsvFileIterator\FileHandler;
+namespace waterada\TeraCsvReader\FileHandler;
 
-use waterada\CsvFileIterator\ReadingPosition;
+use waterada\TeraCsvReader\ReadingPosition;
 
 /**
  * CsvFileHandler

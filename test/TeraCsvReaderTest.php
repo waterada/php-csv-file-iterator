@@ -1,13 +1,13 @@
 <?php
-use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileIterator\ReadingPosition;
-use waterada\CsvFileIterator\Record;
-use waterada\CsvFileIterator\RecordLimitException;
+use waterada\TeraCsvReader\TeraCsvReader;
+use waterada\TeraCsvReader\ReadingPosition;
+use waterada\TeraCsvReader\Record;
+use waterada\TeraCsvReader\RecordLimitException;
 
 /**
- * Class CsvFileIteratorTest
+ * Class TeraCsvReaderTest
  */
-class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
+class TeraCsvReaderTest extends PHPUnit_Framework_TestCase
 {
 
     public function provider_base_files()
@@ -46,7 +46,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_base_CSVファイルを開ける($title, $data)
     {
-        $csv = new CsvFileIterator(FileFabricate::fromString($data)->getPath());
+        $csv = new TeraCsvReader(FileFabricate::fromString($data)->getPath());
         $this->assertEquals(['列1', '列2', '列3'], $csv->getColumnMapper()->getColumns(), "列名 " . $title);
         $i = 0;
         foreach ($csv->iterate() as $record) {
@@ -60,7 +60,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param CsvFileIterator $csv
+     * @param TeraCsvReader $csv
      * @return Record[]
      */
     private function __iterateRecords($csv)
@@ -74,7 +74,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_複数行取得できる()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2'],
             ['11', '12'],
             ['21', '22'],
@@ -90,7 +90,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_一括で配列として取得できる_カラム無し()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2'],
             ['11', '12'],
             ['21', '22'],
@@ -105,7 +105,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_一括で配列として取得できる_カラム有り()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2'],
             ['11', '12'],
             ['21', '22'],
@@ -136,7 +136,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_condition_除外できる($title, $excludeIds, $expected)
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['ID'],
             ['1'],
             ['2'],
@@ -172,7 +172,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['9999'], $data[10001]);
         $this->assertEquals(['100002'], $data[10002]);
 
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray($data)->toCsv()->getPath());
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray($data)->toCsv()->getPath());
         $csv->getColumnMapper()->setConditions(['Q1' => ['NOT_IN', $excludeIds]]);
 
         $Q1List = [];
@@ -184,7 +184,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_ラベルだけのファイルなら空が返る()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2', 'Q3'],
         ])->toCsv()->getPath());
         $Q1List = [];
@@ -196,7 +196,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_condition_除外結果が0件なら空が返る()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Ex1'],
             ['1', '1'],
             ['2', '1'],
@@ -213,7 +213,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_取得列が指定されていないなら元の順序で取得できる()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q5', 'Q4', 'Q3', 'Q2', 'Q1'],
             ['11', '12', '13', '14', '15'],
             ['21', '22', '23', '24', '25'],
@@ -227,7 +227,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_取得列が指定されていたら取得列で指定した列のみが指定順に取得できる()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
             ['11', '12', '13', '14', '15'],
             ['21', '22', '23', '24', '25'],
@@ -242,7 +242,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_取得列として在しないカラムを含められる()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q2', 'Q4'],
             ['12', '14'],
             ['22', '24'],
@@ -275,7 +275,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_condition_条件が指定されていたら条件に合致する行だけが取得できる($statuses, $expected)
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'status'],
             ['1', 'quotafull'],
             ['2', 'complete'],
@@ -297,7 +297,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_condition_一致条件と除外条件を両方同時に指定できる()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'status'],
             ['1', 'complete'], //x除外id & o取得status
             ['2', 'complete'], //o取得id & o取得status
@@ -321,7 +321,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_メソッドチェインでset系はかける()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1', 'Q2', 'Q3', 'Q4', 'status'],
             ['11', '12', '13', '14', 'complete'],
             ['21', '22', '23', '24', 'complete'],
@@ -340,7 +340,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_format_BOMが先頭についていたら撤去される()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['Q1'],
             ['あああ'],
         ])->toCsv()->prependUtf8Bom()->getPath());
@@ -351,7 +351,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_データが存在_する_場合falseを返す()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['ID 1', 'Value 1'],
             ['1 1', '値1 1'],
             ['2 2', '値2 2'],
@@ -362,7 +362,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_データが存在_しない_場合trueを返す()
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             ['ID 1', 'Value 1'],
         ])->toCsv()->getPath());
 
@@ -371,7 +371,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
 
     public function test_base_末尾に空文字があっても取得できる()
     {
-        $csv = new CsvFileIterator(FileFabricate::fromString(
+        $csv = new TeraCsvReader(FileFabricate::fromString(
             "Q1,Q2,Q3\n" .
             "か,,\n"
         )->getPath());
@@ -406,7 +406,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_base_空欄のカラムでもデータが取り出せる($columns)
     {
-        $csv = new CsvFileIterator(FileFabricate::from2DimensionalArray([
+        $csv = new TeraCsvReader(FileFabricate::from2DimensionalArray([
             $columns,
         ])->toCsv()->getPath());
         //セットしたとおりに取り出せること
@@ -432,7 +432,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
             str_repeat("1,2\n", 100) .
             mb_convert_encoding("ああ,いい", $enc, "UTF-8")
         )->getPath();
-        $csv = new CsvFileIterator($path, $enc); //矯正する
+        $csv = new TeraCsvReader($path, $enc); //矯正する
 
         $this->assertEquals(["FirstlyANSI", "aa"], $csv->getColumnMapper()->getColumns(), $enc);
         $data = [];
@@ -451,12 +451,12 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_base_file_does_not_exist()
     {
-        new CsvFileIterator("/tmp/NOT_EXIST");
+        new TeraCsvReader("/tmp/NOT_EXIST");
     }
 
     public function test_base_Excelファイルから取得できる()
     {
-        $csv = new CsvFileIterator(__DIR__ . "/test.xlsx");
+        $csv = new TeraCsvReader(__DIR__ . "/test.xlsx");
         $actual = [];
         $actual[] = $csv->getColumnMapper()->getColumns();
         foreach ($csv->iterate() as $record) {
@@ -513,7 +513,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
      */
     public function test_suspending_中断して再開する($path, $expectedMax, $expectedCursors)
     {
-        $csv = new CsvFileIterator($path);
+        $csv = new TeraCsvReader($path);
 
         $maxCursor = $csv->getMaxCursor();
         $this->assertEquals($expectedMax, $maxCursor, '最大値が取得できる');
@@ -556,7 +556,7 @@ class CsvFileIteratorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param CsvFileIterator $csv
+     * @param TeraCsvReader $csv
      * @param ReadingPosition|null $position
      * @param int $limit
      * @return array

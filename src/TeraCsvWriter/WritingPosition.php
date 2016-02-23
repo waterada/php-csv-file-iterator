@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileWriter;
+namespace waterada\TeraCsvWriter;
 
 /**
  * Class ReadingPosition

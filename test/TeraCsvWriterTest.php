@@ -1,12 +1,12 @@
 <?php
-use waterada\CsvFileIterator\CsvFileIterator;
-use waterada\CsvFileWriter\CsvFileWriterFlow;
-use waterada\CsvFileWriter\EncodingFlow;
-use waterada\CsvFileWriter\HeaderFlow;
-use waterada\CsvFileWriter\LineBreakFlow;
-use waterada\CsvFileWriter\OutputToFlow;
+use waterada\TeraCsvReader\TeraCsvReader;
+use waterada\TeraCsvWriter\TeraCsvWriterFlow;
+use waterada\TeraCsvWriter\EncodingFlow;
+use waterada\TeraCsvWriter\HeaderFlow;
+use waterada\TeraCsvWriter\LineBreakFlow;
+use waterada\TeraCsvWriter\OutputToFlow;
 
-class CsvFileWriterTest extends PHPUnit_Framework_TestCase
+class TeraCsvWriterTest extends PHPUnit_Framework_TestCase
 {
     public $path;
 
@@ -33,7 +33,7 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
     {
         $cases1 = [
             'CSV' => [
-                function (CsvFileWriterFlow $flow) {
+                function (TeraCsvWriterFlow $flow) {
                     return $flow->CSV();
                 },
                 function ($expected) {
@@ -41,7 +41,7 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
                 },
             ],
             'TSV' => [
-                function (CsvFileWriterFlow $flow) {
+                function (TeraCsvWriterFlow $flow) {
                     return $flow->TSV();
                 },
                 function ($expected) {
@@ -120,7 +120,7 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
             foreach ($cases2 as $key2 => list($flow2, $exp2)) {
                 foreach ($cases3 as $key3 => list($flow3, $exp3)) {
                     $cases[sprintf('%s x %s x %s', $key1, $key2, $key3)] = [
-                        $flow3($flow2($flow1(new CsvFileWriterFlow()))),
+                        $flow3($flow2($flow1(new TeraCsvWriterFlow()))),
                         $exp2($exp1($exp3)),
                     ];
                 }
@@ -156,7 +156,7 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
 
     private function __getActualContents($path)
     {
-        $csv = new CsvFileIterator($path);
+        $csv = new TeraCsvReader($path);
         $actual = $csv->toArrayWithColumns();
         return $actual;
     }
@@ -168,7 +168,7 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
     public function test_XLSX($withHeader)
     {
         $path = $this->__tempfile(".xlsx");
-        $flow = (new CsvFileWriterFlow());
+        $flow = (new TeraCsvWriterFlow());
         if ($withHeader) {
             $out = $flow->XLSX()->columns(["あ", "い"])->toPath($path)->errorIfExists()->begin();
         } else {
@@ -185,8 +185,8 @@ class CsvFileWriterTest extends PHPUnit_Framework_TestCase
     public function cases_csv_or_excel()
     {
         return [
-            'CSV' => [(new CsvFileWriterFlow())->CSV()->UTF8()->withoutBOM()->LF()->WITH_BR_at_EOF(), null],
-            'XLSX' => [(new CsvFileWriterFlow())->XLSX(), '.xlsx'],
+            'CSV' => [(new TeraCsvWriterFlow())->CSV()->UTF8()->withoutBOM()->LF()->WITH_BR_at_EOF(), null],
+            'XLSX' => [(new TeraCsvWriterFlow())->XLSX(), '.xlsx'],
         ];
     }
 

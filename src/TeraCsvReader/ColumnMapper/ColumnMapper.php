@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileIterator\ColumnMapper;
+namespace waterada\TeraCsvReader\ColumnMapper;
 
 /**
  * カラム名から値をアクセスする際の戦略を管理する。

@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileIterator;
+namespace waterada\TeraCsvReader;
 
 /**
  * Class ReadingPosition

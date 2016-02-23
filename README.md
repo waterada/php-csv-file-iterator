@@ -1,4 +1,4 @@
-CsvFileIterator
+TeraCsvReader
 ================
 
 [![Build Status](https://travis-ci.org/waterada/php-csv-file-iterator.svg?branch=master)](https://travis-ci.org/waterada/php-csv-file-iterator)
@@ -15,7 +15,7 @@ CSV/TST/Excelファイルを特に設定なくても自動認識して読みこ�
 
 ```php
 // ファイル冒頭で使用宣言
-use \waterada\CsvFileIterator\CsvFileIterator;
+use \waterada\TeraCsvReader\TeraCsvReader;
 
 
 // 普通に読む
@@ -25,7 +25,7 @@ use \waterada\CsvFileIterator\CsvFileIterator;
 //        - BOM の有無 (まずは冒頭の BOM の存在を疑う)
 //        - 文字コード (ただしSJIS, UTF-8, UTF-16LE のみ対応) (2行目から20行読んで判別。BOMがあればそれを優先) 
 //      1行目はラベル行として読み込まれ、各値にアクセスする際のキーとなります。1行目のラベル行には改行を含めることはできません。
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 echo implode(",", $csv->getColumnMapper()->getColumns()); // 列1,列2,列3
 foreach ($csv->iterate() as $rownum => $record) {
     echo $rownum . ":" . $record->get('列1'); // 1:あ
@@ -37,7 +37,7 @@ foreach ($csv->iterate() as $rownum => $record) {
 
 // 除外条件を設定可能
 //      指定したものを foreach で読み飛ばします。
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 // CSVの中身:  
 //    ID
 //    1
@@ -53,7 +53,7 @@ foreach ($csv->iterate() as $record) {
 
 // 合致条件を設定可能
 //     指定したもの以外を foreach で読み飛ばします。
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 // CSVの中身:  
 //    ID
 //    1
@@ -68,7 +68,7 @@ foreach ($csv->iterate() as $record) {
 
 
 // 出力カラム順指定 (toArray の順序を指定する)
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 // CSVの中身:  
 //    Q1,Q2,Q3,Q4,Q5
 //    11,12,13,14,15
@@ -81,7 +81,7 @@ foreach ($csv->iterate() as $record) {
 
 
 // メソッドチェインも可能
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 $columns = $csv->getColumnMapper()->setColumns(['Q3', 'Q1'])->setConditions([
     'Q2'     => ['NOT_IN', ['12']],
     'status' => ['IN', ['complete']],
@@ -89,24 +89,24 @@ $columns = $csv->getColumnMapper()->setColumns(['Q3', 'Q1'])->setConditions([
 
 
 // データの有無をチェック
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 echo ($csv->isEmpty() ? 'true' : 'false'); // ラベル行だけか、すべての行が除外されたら、true
 
 
 // エンコーディングを強制できる
-$csv = new CsvFileIterator($path, 'SJIS');
+$csv = new TeraCsvReader($path, 'SJIS');
 
 
 // 区切り文字を強制できる
-$csv = new CsvFileIterator($path, null, "\t");
+$csv = new TeraCsvReader($path, null, "\t");
 
 
 // 拡張子が xlsx のファイル(Excelファイル)も自動認識して開けます（ただしCSV的にデータのみ読む）
-$csv = new CsvFileIterator("aaa.xlsx");
+$csv = new TeraCsvReader("aaa.xlsx");
 
 
 // 大量データを読む際に複数リクエストに分割して % を算出しながら読むこともできます。
-$csv = new CsvFileIterator($path);
+$csv = new TeraCsvReader($path);
 $csv->setLimit(1000); //1000行ごとにforeachを中断する ※こうすることでRecordLimitExceptionが発生するようになります。
 $position = $_SESSION['position']; //前回の "位置" を取得
 try {

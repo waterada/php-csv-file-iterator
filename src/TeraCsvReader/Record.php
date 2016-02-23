@@ -1,7 +1,7 @@
 <?php
-namespace waterada\CsvFileIterator;
+namespace waterada\TeraCsvReader;
 
-use waterada\CsvFileIterator\ColumnMapper\ColumnMapper;
+use waterada\TeraCsvReader\ColumnMapper\ColumnMapper;
 
 /**
  * Class Record

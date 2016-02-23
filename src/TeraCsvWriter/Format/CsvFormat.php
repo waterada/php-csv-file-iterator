@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileWriter\Format;
+namespace waterada\TeraCsvWriter\Format;
 
 class CsvFormat extends Format
 {

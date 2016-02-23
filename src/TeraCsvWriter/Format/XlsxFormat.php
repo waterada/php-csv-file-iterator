@@ -1,5 +1,5 @@
 <?php
-namespace waterada\CsvFileWriter\Format;
+namespace waterada\TeraCsvWriter\Format;
 
 use PHPExcel;
 use PHPExcel_IOFactory;

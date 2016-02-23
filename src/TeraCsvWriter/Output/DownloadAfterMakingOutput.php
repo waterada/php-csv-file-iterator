@@ -1,7 +1,7 @@
 <?php
-namespace waterada\CsvFileWriter\Output;
+namespace waterada\TeraCsvWriter\Output;
 
-use waterada\CsvFileWriter\WritingPosition;
+use waterada\TeraCsvWriter\WritingPosition;
 
 class DownloadAfterMakingOutput extends Output
 {

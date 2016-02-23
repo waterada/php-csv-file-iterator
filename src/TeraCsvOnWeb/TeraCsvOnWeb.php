@@ -1,7 +1,7 @@
 <?php
-namespace waterada\CsvFileOnWeb;
+namespace waterada\TeraCsvOnWeb;
 
-class CsvFileOnWeb
+class TeraCsvOnWeb
 {
     public function ajaxHeader()
     {
